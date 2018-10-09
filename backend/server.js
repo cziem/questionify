@@ -5,7 +5,6 @@ const mongoose = require('mongoose')
 require('dotenv').config()
 
 // Import Routers
-const test = require('./routes/test')
 const questions = require('./routes/questions')
 
 const app = express()
@@ -22,6 +21,7 @@ mongoose.connect(process.env.MONGODB_URI, options)
   .then(() => console.log('connected to DB...'))
   .catch(err => console.log('Could not connect', err))
 
+// use routers
 app.use('/', questions)
 
 app.listen(PORT, () => console.log(`App is running on port ${PORT}`))
