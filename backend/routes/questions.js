@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 
 const router = express.Router()
 
-router.get('/' (req, res) => {
+router.get('/', (req, res) => {
   res.json({
     response: 'A GET request for LOOKING at questions'
   })
