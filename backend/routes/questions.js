@@ -19,22 +19,31 @@ router.param('qID', (req, res, next, id) => {
 })
 
 router.get('/', (req, res) => {
-  res.json({
-    response: 'A GET request for LOOKING at questions'
+  Question.find({}).sort({ createdAt: -1 }).exec((err, questions) => {
+    if (err) return next(err)
+    if (questions.length <= 0) {
+      res.send('There are no questions')
+    } else {
+      res.json(questions)
+    }
   })
 })
 
-router.post('/', (req, res) => {
-  res.json({
-    response: 'A POST request for CREATING questions',
-    body: req.body
-  })
+router.post('/', (req, res, next) => {
+  if (req.body.text) {
+    const question = new Question(req.body)
+    question.save((err, question) => {
+      if (err) return next(err)
+      res.status(201)
+      res.json(question)
+    })
+  } else {
+    res.send('You cannot save empty questions')
+  }
 })
 
 router.get('/:qID', (req, res) => {
-  res.json({
-    response: `A GET request for LOOKING at a special answer id: ${req.params.qID}`
-  })
+  res.json(req.question)
 })
 
 module.exports = router
