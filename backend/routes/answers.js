@@ -1,6 +1,16 @@
 const express = require('express')
-
 const router = express.Router()
+const errors = require('../middlewares/errors')
+
+router.param('aID', (req, res, next, id) => {
+  req.answer = req.question.answers.id(id)
+  if (!req.answer) {
+    err = new Error('Answer not found')
+    err.status = 404
+    return next(err)
+  }
+  return next()
+})
 
 // create answers
 router.post('/:qID/answers', (req, res) => {
