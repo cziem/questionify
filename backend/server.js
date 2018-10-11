@@ -7,6 +7,7 @@ require('dotenv').config()
 
 // Import Routers
 const questions = require('./routes/questions')
+const answers = require('./routes/answers')
 const errors = require('./middlewares/errors')
 
 const app = express()
@@ -26,6 +27,7 @@ mongoose.connect(URI, options)
 
 // use routers
 app.use('/questions', questions)
+app.use('/:qID/answers', answers)
 app.use(errors)
 
 app.listen(PORT, () => console.log(`App is running on port ${PORT}`))
