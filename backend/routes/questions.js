@@ -2,8 +2,6 @@ const express = require('express')
 const router = express.Router()
 const Question = require('../model/schema').Question
 
-const errors = require('../middlewares/errors')
-
 // router param
 router.param('qID', (req, res, next, id) => {
   Question.findById(id, (err, doc) => {
@@ -19,13 +17,16 @@ router.param('qID', (req, res, next, id) => {
 })
 
 router.get('/', (req, res) => {
-  Question.find({}).sort({ createdAt: -1 }).exec((err, questions) => {
-    if (err) return next(err)
-    if (questions.length <= 0) {
-      res.send('There are no questions')
-    } else {
-      res.json(questions)
-    }
+  Question.find()
+    .select('_id text answers')
+    .sort({ createdAt: -1 })
+    .exec((err, questions) => {
+      if (err) return next(err)
+      if (questions.length <= 0) {
+        res.send('There are no questions')
+      } else {
+        res.json(questions)
+      }
   })
 })
 
