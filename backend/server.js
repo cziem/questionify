@@ -12,7 +12,7 @@ const errors = require('./middlewares/errors')
 
 const app = express()
 const PORT = process.env.PORT || 5000
-const URI = process.env.MONGODB_URI // || 'mongodb://localhost:27017/questionify'
+const URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/questionify'
 
 app.use(cors())
 app.use(logger('dev'))
@@ -26,8 +26,8 @@ mongoose.connect(URI, options)
   .catch(err => console.log('Could not connect', err))
 
 // use routers
-app.use('/questions', questions)
-app.use('/:qID/answers', answers)
+app.use('/api/questions', questions)
+app.use('/api/', answers) // You should access this if you have autorization
 app.use(errors)
 
 app.listen(PORT, () => console.log(`App is running on port ${PORT}`))

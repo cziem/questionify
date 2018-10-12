@@ -1,27 +1,45 @@
 const express = require('express')
 const router = express.Router()
-const errors = require('../middlewares/errors')
+
+const Question = require('../model/schema').Question
 
 router.param('aID', (req, res, next, id) => {
   req.answer = req.question.answers.id(id)
   if (!req.answer) {
     err = new Error('Answer not found')
     err.status = 404
-    res.send(err)
+    res.json({
+      err,
+      message: `No answer was found with given id: ${id}`
+    })
     return next(err)
   }
   return next()
 })
 
+router.param('qID', (req, res, next, id) => {
+	Question.findById(id, (err, doc) => {
+		if (err) return next(err)
+		if (!doc) {
+			err = new Error('Document not found');
+			err.status = 400
+			return next(err)
+		}
+		req.question = doc
+		return next()
+	})
+})
+
 // create answers
-router.post('/', (req, res, next) => {
+router.post('/:qID', (req, res, next) => {
   console.log(req.question)
-  // req.question.answers.push(req.body)
-  // req.question.save((err, question) => {
-  //     if (err) return next(err)
-  //     res.status(201)
-  //     res.json(question)
-  // })
+  
+  req.question.answers.push(req.body)
+  req.question.save((err, question) => {
+    if (err) return next(err)
+    res.status(201)
+    res.json(question)
+  })
 })
 
 // updating an answer
@@ -35,8 +53,8 @@ router.put('/:qID/answers/:aID', (req, res, next) => {
 
 // delete an answer
 router.delete('/:qID/answers/:aID', (req, res) => {
-  req.answer.remove(err => {
-    req.question.save((err, questoin) => {
+  req.answer.remove(doc => {
+    req.question.save((err, question) => {
       if (err) return next(err)
       res.json(question)
     })
